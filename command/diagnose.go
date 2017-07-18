@@ -45,6 +45,20 @@ func Diagnose() bool {
 		}
 	}
 
+	_, err = bash("tsc -v")
+	if err != nil {
+		fmt.Println("-- TypeScript is disabled because the required npm is not found.")
+		fmt.Println("   (install it if you wish to use TypeScript : npm install -g typescript)")
+		allGood = false
+	} else {
+		_, err = interpreter.Compile(assetsPath + "/javascripts/app.ts")
+		if err != nil {
+			fmt.Println("-- TypeScript is disabled because error raised while compiling. Error: ")
+			fmt.Printf("%s\n", err.Error())
+			allGood = false
+		}
+	}
+
 	if allGood {
 		fmt.Println("-- Great, your environment seems perfect for Train.")
 	} else {

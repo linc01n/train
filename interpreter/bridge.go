@@ -68,6 +68,15 @@ func Compile(filePath string) (result string, err error) {
 			err = errors.New("Could not compile coffee: 'coffee -p " +
 				filePath + "' failed: " + e.Error())
 		}
+
+	case ".ts":
+		out, e := exec.Command("tsc", "--outFile", "/dev/stdout", filePath).CombinedOutput()
+		result = string(out)
+		if e != nil {
+			err = errors.New("Could not compile typescript: 'tsc --outFile /dev/stdout " +
+				filePath + "' failed: " + e.Error())
+		}
+
 	default:
 		err = errors.New("Unsupported format (" + filePath + "). Valid formats are: sass.")
 	}

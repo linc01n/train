@@ -4,7 +4,6 @@ import (
 	"crypto/md5"
 	"errors"
 	"fmt"
-	"github.com/shaoshing/train"
 	"io"
 	"io/ioutil"
 	"os"
@@ -14,13 +13,15 @@ import (
 	"regexp"
 	"runtime"
 	"strings"
+
+	"github.com/shaoshing/train"
 )
 
 const CompressorFileName = "yuicompressor-2.4.7.jar"
 
 var Helps = `Available commands:
 	 bundle: [default]
-   upgrade: get and install latest train.
+	 upgrade: get and install latest train.
 `
 
 func Bundle(assetsPath string, publicPath string) {
@@ -79,6 +80,7 @@ var mapCompiledExt = map[string]string{
 	".sass":   ".css",
 	".scss":   ".css",
 	".coffee": ".js",
+	".ts":     ".js",
 }
 
 func bundleAssets() {
@@ -104,7 +106,7 @@ func bundleAssets() {
 				}
 				ioutil.WriteFile(filePath, []byte(content), os.ModeDevice)
 			}
-		case ".sass", ".scss", ".coffee":
+		case ".sass", ".scss", ".coffee", ".ts":
 			if path.Base(filePath)[0] == '_' {
 				return nil
 			}

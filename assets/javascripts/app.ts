@@ -1,0 +1,1 @@
+let square = function(x: number): number { return x * x }

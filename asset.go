@@ -10,7 +10,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-  "github.com/shaoshing/train/interpreter"
+
+	"github.com/shaoshing/train/interpreter"
 )
 
 func ReadAsset(assetUrl string) (result string, err error) {
@@ -18,7 +19,7 @@ func ReadAsset(assetUrl string) (result string, err error) {
 	fileExt := path.Ext(filePath)
 
 	switch fileExt {
-	case ".js", ".css", ".scss", ".sass", ".coffee":
+	case ".js", ".css", ".scss", ".sass", ".coffee", ".ts":
 		if Config.BundleAssets {
 			data := bytes.NewBuffer([]byte(""))
 			contents := []string{}
@@ -54,6 +55,10 @@ func compileSassAndCoffee(filePath string) (string, error) {
 
 var patterns = map[string](map[string]*regexp.Regexp){
 	".coffee": map[string]*regexp.Regexp{
+		"head":    regexp.MustCompile(`(.*\n)*(\ *#\=\ *require\ +.*\n)+`),
+		"require": regexp.MustCompile(`^\ *#\=\ *require\ +`),
+	},
+	".ts": map[string]*regexp.Regexp{
 		"head":    regexp.MustCompile(`(.*\n)*(\ *#\=\ *require\ +.*\n)+`),
 		"require": regexp.MustCompile(`^\ *#\=\ *require\ +`),
 	},
@@ -139,8 +144,9 @@ var mapAlterExtensions = map[string]string{
 	".css":    ".sass|.scss",
 	".sass":   ".scss|.css",
 	".scss":   ".sass|.css",
-	".js":     ".coffee",
+	".js":     ".coffee|.ts",
 	".coffee": ".js",
+	".ts":     ".js",
 }
 
 // Find possible asset files.
@@ -202,7 +208,7 @@ func ReadRawAsset(filePath, assetUrl string) (result string, err error) {
 func ReadRawAndCompileAsset(filePath, assetUrl string) (result string, err error) {
 	fileExt := path.Ext(filePath)
 
-	if fileExt == ".scss" || fileExt == ".sass" || fileExt == ".coffee" {
+	if fileExt == ".scss" || fileExt == ".sass" || fileExt == ".coffee" || fileExt == ".ts" {
 		result, err = compileSassAndCoffee(filePath)
 	} else {
 		result, err = ReadRawAsset(filePath, assetUrl)
